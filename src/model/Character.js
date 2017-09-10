@@ -19,14 +19,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var CharacterClasses = require('./CharacterClasses');
 
-function Character(strength, dexterity, agility, intellect, spirit, training, role) {
+function Character(strength, dexterity, agility, intellect, spirit, training, wounds, woundlimit, profession, meleeWeapon, rangeWeapon, armor) {
     this.strength = strength;
     this.dexterity = dexterity;
     this.agility = agility;
     this.intellect = intellect;
     this.spirit = spirit;
     this.training = training;
-    this.role = role;
+    this.wounds = wounds;
+    this.woundlimit = woundlimit;
+    this.profession = profession;
+    this.meleeWeapon = meleeWeapon;
+    this.rangeWeapon = rangeWeapon;
+    this.armor = armor;
 }
 
 Character.prototype.modStrength(modifier) {
@@ -53,42 +58,62 @@ Character.prototype.modTraining(modifier) {
     this.training += modifier;
 }
 
+Character.prototype.takeWounds(modifier) {
+    this.wounds += modifier;
+}
+
+Character.prototype.isDead() {
+    return this.wounds >= this.woundlimit;
+}
+
+Character.prototype.setMeleeWeapon(meleeWeapon) {
+    this.meleeWeapon = meleeWeapon;
+}
+
+Character.prototype.setRangeWeapon(rangeWeapon) {
+    this.rangeWeapon = rangeWeapon;
+}
+
 Character.prototype.dryRoll(skill) {
     roll = skill + 1 + Math.floor(Math.random() * 20)
     return roll >= 15;
 }
 
+Character.prototype.getBuffs() {
+    return this.training - this.wounds * 3;
+}
+
 Character.prototype.dodge() {
-    skill = this.agility + this.training + CharacterClasses[role].dodge;
+    skill = this.getBuffs() + this.agility + CharacterClasses[this.profession].dodge;
     return this.dryRoll(skill);
 }
 
 Character.prototype.fight(enemyBuffs) {
-    skill = (this.strength + this.intellect) / 2 + this.training + CharacterClasses[role].fight - enemyBuffs;
+    skill = this.getBuffs() + (this.strength + this.intellect) / 2 + CharacterClasses[this.profession].fight - enemyBuffs;
     return this.dryRoll(skill);
 }
 
 Character.prototype.cast(enemyBuffs) {
-    skill = this.intellect + this.training + CharacterClasses[role].cast - enemyBuffs;
+    skill = this.getBuffs() + this.intellect + CharacterClasses[this.profession].cast - enemyBuffs;
     return this.dryRoll(skill);
 }
 
 Character.prototype.spot() {
-    skill = (this.spirit + this.intellect) / 2 + this.training + CharacterClasses[role].spot;
+    skill = this.getBuffs() + (this.spirit + this.intellect) / 2 + CharacterClasses[this.profession].spot;
     return this.dryRoll(skill);
 }
 
 Character.prototype.shoot(enemyBuffs) {
-    skill = (this.dexterity + this.intellect) / 2 + this.training + CharacterClasses[role].shoot - enemyBuffs;
+    skill = this.getBuffs() + (this.dexterity + this.intellect) / 2 + CharacterClasses[this.profession].shoot - enemyBuffs;
     return this.dryRoll(skill);
 }
 
 Character.prototype.sneak() {
-    skill = (this.dexterity + this.spirit) / 2 + this.training + CharacterClasses[role].sneak;
+    skill = this.getBuffs() + (this.dexterity + this.spirit) / 2 + CharacterClasses[this.profession].sneak;
     return this.dryRoll(skill);
 }
 
 Character.prototype.rebound() {
-    skill = (this.strength + this.spirit) / 2 + this.training + CharacterClasses[role].sneak;
+    skill = this.getBuffs() + (this.strength + this.spirit) / 2 + CharacterClasses[this.profession].sneak;
     return this.dryRoll(skill);
 }
