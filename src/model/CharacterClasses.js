@@ -19,31 +19,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 module.exports = {
     "Fighter": {
-        "hitpoints": 30,
-        "nearattack": 6,
-        "farattack": 3,
-        "defense": 5,
-        "elemental_advantage": cold,
-        "elemental_weakness": fire,
-        "feats": ["flurry"]
+        "dodge": 0,
+        "fight": 3,
+        "cast": 0,
+        "spot": 0,
+        "shoot": 0,
+        "sneak": 0,
+        "rebound": 0
     }
     ,"Wizard": {
-        "hitpoints": 30,
-        "nearattack": 5,
-        "farattack": 6,
-        "defense": 3,
-        "elemental_advantage": acid,
-        "elemental_weakness": cold,
-        "feats": ["lightning"]
+        "dodge": 0,
+        "fight": 0,
+        "cast": 3,
+        "spot": 0,
+        "shoot": 0,
+        "sneak": 0,
+        "rebound": 0
     }
-    ,"Rogue": {
-        "hitpoints": 30,
-        "nearattack": 2,
-        "farattack": 6,
-        "defense": 6,
-        "elemental_advantage": fire,
-        "elemental_weakness": acid,
-        "feats": ["sneak_attack"]
+    ,"Ranger": {
+        "dodge": 1,
+        "fight": 0,
+        "cast": 0,
+        "spot": 0,
+        "shoot": 2,
+        "sneak": 0,
+        "rebound": 0
     }
     ,"Skeleton": {
         "hitpoints": 2,
