@@ -19,7 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var CharacterClasses = require('./CharacterClasses');
 
-function Character(strength, dexterity, agility, intellect, spirit, training, wounds, woundlimit, profession, meleeWeapon, rangeWeapon, armor) {
+function Character(strength, dexterity, agility, intellect, spirit, training, wounds, woundlimit, profession, inventory) {
+    if (typeof inventory === 'undefined') {
+        inventory = [];
+    }
+
     this.strength = strength;
     this.dexterity = dexterity;
     this.agility = agility;
@@ -29,9 +33,7 @@ function Character(strength, dexterity, agility, intellect, spirit, training, wo
     this.wounds = wounds;
     this.woundlimit = woundlimit;
     this.profession = profession;
-    this.meleeWeapon = meleeWeapon;
-    this.rangeWeapon = rangeWeapon;
-    this.armor = armor;
+    this.inventory = inventory;
 }
 
 Character.prototype.modStrength(modifier) {
@@ -66,17 +68,58 @@ Character.prototype.isDead() {
     return this.wounds >= this.woundlimit;
 }
 
-Character.prototype.setMeleeWeapon(meleeWeapon) {
-    this.meleeWeapon = meleeWeapon;
-}
-
-Character.prototype.setRangeWeapon(rangeWeapon) {
-    this.rangeWeapon = rangeWeapon;
-}
-
 Character.prototype.dryRoll(skill) {
     roll = skill + 1 + Math.floor(Math.random() * 20)
     return roll >= 15;
+}
+
+Character.prototype.addToInventory(myItems) {
+    for (int i = 0; i < myItems.length; i++) {
+        this.inventory.append(myItems[i]);
+    }
+}
+
+Character.prototype.isItemInInventory(itemName) {
+    found = false;
+    for (int i = 0; i < this.inventory.length; i++) {
+        if (this.inventory[i].name == itemName) {
+            found = true;
+        }
+    }
+
+    return found;
+}
+
+Character.prototype.getStrongestWeadonOfKind(kind) {
+    weapon = "none";
+    strongestPower = 0;
+    for (int i = 0; i < this.inventory.length; i++) {
+        if (Items[this.inventory[i]].kind == kind) {
+            if (Items[this.inventory[i]].power > strongestPower) {
+                strongestPower = Items[this.inventory[i]].power;
+                weapon = this.inventory[i];
+            }
+        }
+    }
+
+    return weapon;
+}
+
+Character.prototype.getWeaponPower(weapon) {
+    if (weapon == "none) {
+        return 0;
+    }
+    return Items[weapon].power;
+}
+
+Character.prototype.getPowerOfStrongestRangeWeapon() {
+    weapon = this.getStrongestWeaponOfKind("melee");
+    return this.getWeaponPower(weapon);
+}
+
+Character.prototype.getPowerOfStrongestRangeWeapon() {
+    weapon = this.getStrongestWeaponOfKind("range");
+    return this.getWeaponPower(weapon);
 }
 
 Character.prototype.getBuffs() {
@@ -89,7 +132,7 @@ Character.prototype.dodge() {
 }
 
 Character.prototype.fight(enemyBuffs) {
-    skill = this.getBuffs() + (this.strength + this.intellect) / 2 + CharacterClasses[this.profession].fight - enemyBuffs;
+    skill = this.getBuffs() + this.getPowerOfStrongestMeleeWeapon() + (this.strength + this.intellect) / 2 + CharacterClasses[this.profession].fight - enemyBuffs;
     return this.dryRoll(skill);
 }
 
@@ -104,7 +147,7 @@ Character.prototype.spot() {
 }
 
 Character.prototype.shoot(enemyBuffs) {
-    skill = this.getBuffs() + (this.dexterity + this.intellect) / 2 + CharacterClasses[this.profession].shoot - enemyBuffs;
+    skill = this.getBuffs() + this.getPowerOfStrongestRangeWeapon() + (this.dexterity + this.intellect) / 2 + CharacterClasses[this.profession].shoot - enemyBuffs;
     return this.dryRoll(skill);
 }
 

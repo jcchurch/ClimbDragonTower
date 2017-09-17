@@ -21,18 +21,23 @@ function Battle(human, npc, humanAction) {
     this.human = human;
     this.npc = npc;
     this.humanAction = humanAction;
-    this.enemyAction = this.getRandomAction(npc);
+    this.enemyAction = this.getRandomAction();
 }
 
-Battle.prototype.getRandomAction = function(npc) {
+Battle.prototype.getRandomAction = function() {
     var dieRoll = Math.random();
 
-    if (dieRoll <= 0.45) {
-        return 'nearattack';
+    if (dieRoll <= 0.30) {
+        return 'melee';
+    }
+    else if (dieRoll <= 0.60) {
+        return 'shoot';
     }
     else if (dieRoll <= 0.90) {
-        return 'farattack';
+        return 'cast';
     }
 
-
+    return 'dodge';
 };
+
+
